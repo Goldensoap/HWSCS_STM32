@@ -1,0 +1,9 @@
+/OBJ/*
+!/OBJ/*.hex
+*.uvoptx
+*.uvprojx
+*.uvguix.*
+*.dbgconf
+*.dbgconf
+*.lst
+*.map
