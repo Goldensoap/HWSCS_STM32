@@ -1,5 +1,4 @@
 /OBJ/*
-!/OBJ/*.hex
 *.uvoptx
 *.uvprojx
 *.uvguix.*
@@ -7,3 +6,4 @@
 *.dbgconf
 *.lst
 *.map
+.vscode
