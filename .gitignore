@@ -6,4 +6,5 @@
 *.dbgconf
 *.lst
 *.map
+*.scvd
 .vscode
