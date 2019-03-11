@@ -66,12 +66,18 @@ void rtc_task(void *pvParameters);		//任务函数
 /*********************************************************************
  * 全局变量
  */
-QueueHandle_t CMD_Get_Queue;	//上位机命令获取消息队列句柄
 
+#define _DEBUG	1//debug 条件编译 1开启debug，0关闭
 /*********************************************************************
  * 本地变量
  */
+
+#define U32_MAX 0xffffffff
+#define SYN_TIMEOUT 
+/*队列定义*/
 #define CMD_GET_Q_NUM	5		//上位机命令获取消息队列的数量
+QueueHandle_t CMD_Get_Queue;	//上位机命令获取消息队列句柄
+
 static int lcd_discolor[14]={	WHITE, BLACK, BLUE,  BRED,      
 						GRED,  GBLUE, RED,   MAGENTA,       	 
 						GREEN, CYAN,  YELLOW,BROWN, 			
@@ -103,6 +109,7 @@ int main(void)
 /*********************************************************************
  * 任务函数
  */
+
 /*启动任务*/
 void start_task(void *pvParameters)
 {
@@ -153,7 +160,19 @@ void cmd_get_task(void *pvParameters)
     while(1){
 		for(i=0;i<USART_REC_LEN;i++)cmd[i]=0;
 		err = xQueueReceive(CMD_Get_Queue,cmd,portMAX_DELAY);
-		if(err==pdTRUE)printf("%s",&cmd[0]);
+		if(err==pdTRUE){
+			if(cmd[0]=='T'){
+				u32 seccount = 0;
+				seccount = (cmd[1]<<24)+(cmd[2]<<16)+(cmd[3]<<8)+cmd[4];
+				xTaskNotify(RTCTask_Handler,seccount,eSetValueWithOverwrite);
+			}
+			if(cmd[0]=='C'){
+
+			}
+			if(cmd[0]=='R'){
+				
+			}
+		}
     }
 }
 
@@ -181,12 +200,15 @@ void cmd_upload_task(void *pvParameters)
 	while(1){
 		/* code */
 	}
-	
+
 }
 
 /*RTC测试任务*/
 void rtc_task(void *pvParameters)
 {
+	uint32_t NotifyValue=0;
+	char FailedCounter=0;
+	BaseType_t err;
 
 	while(RTC_Init())		//RTC初始化	，一定要初始化成功
 	{ 
@@ -194,10 +216,36 @@ void rtc_task(void *pvParameters)
 		delay_ms(800);
 		LCD_ShowString(126,111,110,16,16,"RTC Trying...");
 	}
-    vTaskDelete(RTCTask_Handler); //删除任务
 	while(1)
 	{
-
+		err=xTaskNotifyWait((uint32_t	)U32_MAX,
+							(uint32_t	)U32_MAX,
+							(uint32_t*	)&NotifyValue,
+							(TickType_t )portMAX_DELAY);
+		if(err==pdTRUE){
+#if _DEBUG
+			printf("get Notify success....");
+			printf("%d",NotifyValue);
+#endif
+			FailedCounter=0;
+			if(NotifyValue==1){ //通知值为1代表向储存任务提供时间戳
+				NotifyValue=0;
+			}else{ 				//若值不为1，则为时间戳，进行同步
+				RTC_Set_Timestamp(NotifyValue);
+				NotifyValue=0;
+			}
+		}else{
+#if _DEBUG
+			printf("get Notify failed....");
+#endif
+			FailedCounter++;
+			if(FailedCounter==100){
+#if _DEBUG
+			printf("WARNING Host lost!!....");
+#endif
+				FailedCounter=0;
+			}
+		}
 	}
 }
 

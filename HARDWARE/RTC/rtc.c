@@ -14,7 +14,7 @@ static void RTC_NVIC_Config(void)
     NVIC_InitTypeDef NVIC_InitStructure;
 	NVIC_InitStructure.NVIC_IRQChannel = RTC_IRQn;		//RTC全局中断
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;	//先占优先级0位
-	//NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;	//先占优先级0位,从优先级4位
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;	//先占优先级0位,从优先级0位
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;		//使能该通道中断
 	NVIC_Init(&NVIC_InitStructure);		//根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
 }
@@ -48,7 +48,7 @@ u8 RTC_Init(void)
 		RTC_WaitForSynchro();		//等待RTC寄存器同步  
 		RTC_ITConfig(RTC_IT_SEC, ENABLE);		//使能RTC秒中断
 		RTC_WaitForLastTask();	//等待最近一次对RTC寄存器的写操作完成
-		RTC_EnterConfigMode();/// 允许配置	
+		RTC_EnterConfigMode();// 允许配置	
 		RTC_SetPrescaler(32767); //设置RTC预分频的值
 		RTC_WaitForLastTask();	//等待最近一次对RTC寄存器的写操作完成
 		RTC_Set(2019,3,2,10,0,55);  //设置时间	
@@ -126,7 +126,7 @@ u8 RTC_Set(u16 syear,u8 smon,u8 sday,u8 hour,u8 min,u8 sec)
 		if(Is_Leap_Year(syear)&&t==1)seccount+=86400;//闰年2月份增加一天的秒钟数	   
 	}
 	seccount+=(u32)(sday-1)*86400;//把前面日期的秒钟数相加 
-	seccount+=(u32)hour*3600;//小时秒钟数
+	seccount+=(u32)hour*3600+8*3600;//小时秒钟数+UTC北京时间修正
     seccount+=(u32)min*60;	 //分钟秒钟数
 	seccount+=sec;//最后的秒钟加上去
 
@@ -182,7 +182,7 @@ u8 RTC_Get(void)
 		calendar.w_date=temp+1;  	//得到日期 
 	}
 	temp=timecount%86400;     		//得到秒钟数   	   
-	calendar.hour=temp/3600;     	//小时
+	calendar.hour=temp/3600+8;     	//小时，UTC 北京时间修正
 	calendar.min=(temp%3600)/60; 	//分钟	
 	calendar.sec=(temp%3600)%60; 	//秒钟
 	calendar.week=RTC_Get_Week(calendar.w_year,calendar.w_month,calendar.w_date);//获取星期   
@@ -207,3 +207,14 @@ u8 RTC_Get_Week(u16 year,u8 month,u8 day)
 	if (yearL%4==0&&month<3)temp2--;
 	return(temp2%7);
 }			  
+
+u8 RTC_Set_Timestamp(u32 timestamp)
+{
+	RTC_EnterConfigMode();// 允许配置
+	RTC_WaitForLastTask();	//等待最近一次对RTC寄存器的写操作完成
+	PWR_BackupAccessCmd(ENABLE);	//使能RTC和后备寄存器访问 
+	RTC_SetCounter(timestamp);	//设置RTC计数器的值
+	RTC_WaitForLastTask();	//等待最近一次对RTC寄存器的写操作完成  	
+	RTC_ExitConfigMode(); //退出配置模式 
+	return 0;
+}
