@@ -22,6 +22,10 @@ void rtc_task(void *pvParameters)
 {
 	uint32_t NotifyValue=0;
 	BaseType_t err;
+#if _DEBUG
+	u8 ack[MSG_UPLOAD_LEN];
+	for(int i=0;i<MSG_UPLOAD_LEN;i++)ack[i]=0;
+#endif
 
 	Time_Stamp_Queue=xQueueCreate(TIME_STAMP_Q_NUM,TIME_STAMP_LEN); //创建时间邮箱
 	while(1)
@@ -32,7 +36,6 @@ void rtc_task(void *pvParameters)
 							(TickType_t )portMAX_DELAY);
 		if(err==pdTRUE){
 			if(NotifyValue==RTC_Get()){ //对比RTC时间戳
-				NotifyValue=0;
 #if _DEBUG
 			    printf("TimeStamp same....\r\n");
 #endif
@@ -42,11 +45,17 @@ void rtc_task(void *pvParameters)
 			    printf("TimeStamp syn success....\r\n");
 			    printf("%d\r\n",NotifyValue);
 #endif
-				NotifyValue=0;
+
 			}
 #if _DEBUG
-			xQueueSend(Msg_Upload_Queue,"TimeStampACK\r\n",1000);
+			ack[0]='A';
+			ack[1]=NotifyValue>>24;
+			ack[2]=(NotifyValue&0x00ff0000)>>16;
+			ack[3]=(NotifyValue&0x0000ff00)>>8;
+			ack[4]=(NotifyValue&0x000000ff);
+			xQueueSend(Msg_Upload_Queue,ack,1000);
 #endif
+			NotifyValue=0;
 		}
 	}
 }

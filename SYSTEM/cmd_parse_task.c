@@ -7,7 +7,7 @@
  * 全局变量
  */
 TaskHandle_t CMD_ParseTask_Handler;     	//任务句柄
-QueueHandle_t CMD_Get_Queue;	//上位机命令获取消息队列句柄
+QueueHandle_t CMD_Parse_Queue;	//上位机命令获取消息队列句柄
 /*********************************************************************
  * 本地变量
  */
@@ -19,14 +19,13 @@ QueueHandle_t CMD_Get_Queue;	//上位机命令获取消息队列句柄
 /*上位机信息解析任务函数*/
 void cmd_parse_task(void *pvParameters)
 {
-	u8 cmd[CMD_REC_LEN];
-	int i;
+	u8 cmd[CMD_PARSE_LEN];
 	BaseType_t err;
 		/*创建队列*/
-	CMD_Get_Queue=xQueueCreate(CMD_PARSE_Q_NUM,CMD_REC_LEN);
+	CMD_Parse_Queue=xQueueCreate(CMD_PARSE_Q_NUM,CMD_PARSE_LEN);
   	while(1){
-		for(i=0;i<CMD_REC_LEN;i++)cmd[i]=0;
-		err = xQueueReceive(CMD_Get_Queue,cmd,portMAX_DELAY);
+		for(int i=0;i<CMD_PARSE_LEN;i++)cmd[i]=0;
+		err = xQueueReceive(CMD_Parse_Queue,cmd,portMAX_DELAY);
 		if(err==pdTRUE){
 			if(cmd[0]=='T'){
 				u32 seccount = 0;

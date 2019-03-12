@@ -44,14 +44,19 @@ extern void lcd_task(void *pvParameters);		//任务函数
 #define MSG_UPLOAD_STK_SIZE 	128             //任务堆栈大小
 extern TaskHandle_t Msg_Upload_Task_Handler;    //任务句柄
 extern void msg_upload_task(void *pvParameters);//任务函数
+/*mesh信息解析任务*/
+#define MSG_PARSE_TASK_PRIO	8               //任务优先级
+#define MSG_PARSE_STK_SIZE 	128             //任务堆栈大小
+extern TaskHandle_t Msg_Parse_Task_Handler;    //任务句柄
+extern void msg_parse_task(void *pvParameters);//任务函数
 /*********************************************************************
  * 公用队列区
  */
 
 /*队列定义*/
 #define CMD_PARSE_Q_NUM	5		//上位机命令获取消息队列的数量
-#define CMD_REC_LEN  	50      //队列单元长度 50Byte，也是最大接收字节数
-extern QueueHandle_t CMD_Get_Queue;	//上位机命令获取消息队列句柄
+#define CMD_PARSE_LEN  	50      //队列单元长度 50Byte，也是最大接收字节数
+extern QueueHandle_t CMD_Parse_Queue;	//上位机命令获取消息队列句柄
 
 #define TIME_STAMP_Q_NUM 1      // 时间邮箱，长度1
 #define TIME_STAMP_LEN   4      //u32 4字节长度
@@ -60,4 +65,8 @@ extern QueueHandle_t Time_Stamp_Queue;
 #define MSG_UPLOAD_Q_NUM 5      //信息和ACK上传队列
 #define MSG_UPLOAD_LEN   50     //队列单元长度 50byte
 extern QueueHandle_t Msg_Upload_Queue;
+
+#define MSG_PARSE_Q_NUM 5      //信息和ACK上传队列
+#define MSG_PARSE_LEN   50     //队列单元长度 50byte
+extern QueueHandle_t Msg_Parse_Queue;
 #endif

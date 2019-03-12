@@ -42,13 +42,14 @@ void start_task(void *pvParameters)
 {
     taskENTER_CRITICAL();           //进入临界区
 
-    /*创建上位机信息解析任务*/
+    /*创建上位机指令解析任务*/
     xTaskCreate((TaskFunction_t )cmd_parse_task,
                 (const char*    )"cmd_get_task",
                 (uint16_t       )CMD_PARSE_STK_SIZE,
                 (void*          )NULL,
                 (UBaseType_t    )CMD_PARSE_TASK_PRIO,
                 (TaskHandle_t*  )&CMD_ParseTask_Handler);
+
     /*创建RTC测试任务*/
     xTaskCreate((TaskFunction_t )rtc_task,
             (const char*    )"rtc_task",
@@ -72,6 +73,14 @@ void start_task(void *pvParameters)
             (void*          )NULL,
             (UBaseType_t    )MSG_UPLOAD_TASK_PRIO,
             (TaskHandle_t*  )&Msg_Upload_Task_Handler);
+
+    /*创建mesh信息解析任务*/
+    xTaskCreate((TaskFunction_t )msg_parse_task,
+            (const char*    )"msg_parse_task",
+            (uint16_t       )MSG_PARSE_STK_SIZE,
+            (void*          )NULL,
+            (UBaseType_t    )MSG_PARSE_TASK_PRIO,
+            (TaskHandle_t*  )&Msg_Parse_Task_Handler);
 
     vTaskDelete(StartTask_Handler); //删除开始任务
     taskEXIT_CRITICAL();            //退出临界区
