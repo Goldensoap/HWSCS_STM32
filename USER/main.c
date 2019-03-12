@@ -10,24 +10,18 @@
 /*********************************************************************
  * 全局变量
  */
-
+TaskHandle_t StartTask_Handler;
 /*********************************************************************
  * 本地变量
  */
-
-/*启动任务*/
-#define START_TASK_PRIO			1       //任务优先级
-#define START_STK_SIZE 			128     //任务堆栈大小
-TaskHandle_t StartTask_Handler;     	//任务句柄
-void start_task(void *pvParameters);	//任务函数
 
 /*********************************************************************
  * 主函数
  */
 int main(void)
 {
-	/*系统初始化*/
-	hardware_init();
+    /*系统初始化*/
+    hardware_init();
 
 	/*创建开始任务*/
     xTaskCreate((TaskFunction_t )start_task,            //任务函数
@@ -70,6 +64,14 @@ void start_task(void *pvParameters)
             (void*          )NULL,
             (UBaseType_t    )LCD_TASK_PRIO,
             (TaskHandle_t*  )&LCDTask_Handler);
+
+    /*创建信息上传测试任务*/
+    xTaskCreate((TaskFunction_t )msg_upload_task,
+            (const char*    )"msg_upload_task",
+            (uint16_t       )MSG_UPLOAD_STK_SIZE,
+            (void*          )NULL,
+            (UBaseType_t    )MSG_UPLOAD_TASK_PRIO,
+            (TaskHandle_t*  )&Msg_Upload_Task_Handler);
 
     vTaskDelete(StartTask_Handler); //删除开始任务
     taskEXIT_CRITICAL();            //退出临界区

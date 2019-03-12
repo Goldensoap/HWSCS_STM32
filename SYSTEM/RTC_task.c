@@ -23,7 +23,7 @@ void rtc_task(void *pvParameters)
 	uint32_t NotifyValue=0;
 	BaseType_t err;
 
-	Time_Stamp_Queue=xQueueCreate(TIME_STAMP_Q_NUM,TIME_STAMP_LEN);
+	Time_Stamp_Queue=xQueueCreate(TIME_STAMP_Q_NUM,TIME_STAMP_LEN); //创建时间邮箱
 	while(1)
 	{
 		err=xTaskNotifyWait((uint32_t	)U32_MAX,
@@ -34,16 +34,19 @@ void rtc_task(void *pvParameters)
 			if(NotifyValue==RTC_Get()){ //对比RTC时间戳
 				NotifyValue=0;
 #if _DEBUG
-			    printf("TimeStamp same....");
+			    printf("TimeStamp same....\r\n");
 #endif
 			}else{ 				//若值不同则进行同步
 				RTC_Set_Timestamp(NotifyValue);
 #if _DEBUG
-			    printf("TimeStamp syn success....");
-			    printf("%d",NotifyValue);
+			    printf("TimeStamp syn success....\r\n");
+			    printf("%d\r\n",NotifyValue);
 #endif
 				NotifyValue=0;
 			}
+#if _DEBUG
+			xQueueSend(Msg_Upload_Queue,"TimeStampACK\r\n",1000);
+#endif
 		}
 	}
 }
