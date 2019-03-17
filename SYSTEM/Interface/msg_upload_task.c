@@ -21,14 +21,12 @@ void msg_upload_task(void *pvParameters)
     Msg_Upload_Queue=xQueueCreate(MSG_UPLOAD_Q_NUM,MSG_UPLOAD_LEN);
     BaseType_t err;
     while(1){
-        for(int i=0;i<MSG_UPLOAD_LEN;i++){
-            UPLOAD_BUF[i]=0;
-        }
+        for(int i=0;i<MSG_UPLOAD_LEN;i++)UPLOAD_BUF[i]=0;
         err=xQueueReceive(Msg_Upload_Queue,UPLOAD_BUF,portMAX_DELAY);
         if(err==pdTRUE){
-#if _DEBUG
+
             printf("%s\r\n",UPLOAD_BUF);
-#endif
+
         }
     }
 }

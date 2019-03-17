@@ -22,10 +22,9 @@ void rtc_task(void *pvParameters)
 {
 	uint32_t NotifyValue=0;
 	BaseType_t err;
-#if _DEBUG
+
 	u8 ack[MSG_UPLOAD_LEN];
 	for(int i=0;i<MSG_UPLOAD_LEN;i++)ack[i]=0;
-#endif
 
 	Time_Stamp_Queue=xQueueCreate(TIME_STAMP_Q_NUM,TIME_STAMP_LEN); //创建时间邮箱
 	while(1)
@@ -47,14 +46,13 @@ void rtc_task(void *pvParameters)
 #endif
 
 			}
-#if _DEBUG
-			ack[0]='A';
-			ack[1]=NotifyValue>>24;
-			ack[2]=(NotifyValue&0x00ff0000)>>16;
-			ack[3]=(NotifyValue&0x0000ff00)>>8;
-			ack[4]=(NotifyValue&0x000000ff);
+
+			ack[0]=NotifyValue>>24;
+			ack[1]=(NotifyValue&0x00ff0000)>>16;
+			ack[2]=(NotifyValue&0x0000ff00)>>8;
+			ack[3]=(NotifyValue&0x000000ff);
 			xQueueSend(Msg_Upload_Queue,ack,1000);
-#endif
+
 			NotifyValue=0;
 		}
 	}

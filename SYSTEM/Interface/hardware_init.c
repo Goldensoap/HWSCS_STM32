@@ -11,6 +11,7 @@
 #include "usart.h"
 #include "sys.h"
 #include "delay.h"
+#include "crc.h"
 /*********************************************************************
  * 全局变量
  */
@@ -28,7 +29,8 @@
 void hardware_init(void)
 {
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);//设置系统中断优先级分组4	 	 
-	delay_init();	    				//延时函数初始化	  
+	delay_init();	    				//延时函数初始化	 
+	CRC_Int_Init(); 
 	uart1_init(115200);					//初始化串口
 	uart2_init(115200);
 	LED_Init();		  					//初始化LED
