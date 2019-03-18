@@ -44,7 +44,7 @@ void start_task(void *pvParameters)
 
     /*创建上位机指令解析任务*/
     xTaskCreate((TaskFunction_t )cmd_parse_task,
-                (const char*    )"cmd_get_task",
+                (const char*    )"cmd_parse_task",
                 (uint16_t       )CMD_PARSE_STK_SIZE,
                 (void*          )NULL,
                 (UBaseType_t    )CMD_PARSE_TASK_PRIO,
@@ -82,13 +82,21 @@ void start_task(void *pvParameters)
             (UBaseType_t    )MSG_PARSE_TASK_PRIO,
             (TaskHandle_t*  )&Msg_Parse_Task_Handler);
 
-    /*创建mesh信息上传任务*/
+    /*创建指令上传任务*/
     xTaskCreate((TaskFunction_t )cmd_upload_task,
             (const char*    )"cmd_upload_task",
             (uint16_t       )CMD_UPLOAD_STK_SIZE,
             (void*          )NULL,
             (UBaseType_t    )CMD_UPLOAD_TASK_PRIO,
             (TaskHandle_t*  )&CMD_Upload_Task_Handler);
+
+    /*创建mesh指令缓存任务*/
+    xTaskCreate((TaskFunction_t )cmd_cache_task,
+            (const char*    )"cmd_cache_task",
+            (uint16_t       )CMD_CACHE_STK_SIZE,
+            (void*          )NULL,
+            (UBaseType_t    )CMD_CACHE_TASK_PRIO,
+            (TaskHandle_t*  )&CMD_Cache_Task_Handler);
 
     vTaskDelete(StartTask_Handler); //删除开始任务
     taskEXIT_CRITICAL();            //退出临界区

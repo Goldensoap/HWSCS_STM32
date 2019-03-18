@@ -51,7 +51,7 @@ void rtc_task(void *pvParameters)
 			ack[1]=(NotifyValue&0x00ff0000)>>16;
 			ack[2]=(NotifyValue&0x0000ff00)>>8;
 			ack[3]=(NotifyValue&0x000000ff);
-			xQueueSend(Msg_Upload_Queue,ack,1000);
+			xQueueSend(Msg_Upload_Queue,ack,100);
 
 			NotifyValue=0;
 		}

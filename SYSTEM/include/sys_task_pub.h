@@ -4,7 +4,7 @@
 /*********************************************************************
  * 编译选项
  */
-#define _DEBUG	0//debug 条件编译 1开启debug，0关闭
+#define _DEBUG	1//debug 条件编译 1开启debug，0关闭
 
 /*********************************************************************
  * 公用头文件
@@ -105,6 +105,6 @@ extern QueueHandle_t Msg_Upload_Queue;
 extern QueueHandle_t Msg_Parse_Queue;
 
 #define CMD_UPLOAD_Q_NUM    5      //控制指令上传队列
-#define CMD_UPLOAD_LEN      30     //队列单元长度 50byte
+#define CMD_UPLOAD_LEN      3     //队列单元长度 3byte
 extern QueueHandle_t CMD_Upload_Queue;
 #endif

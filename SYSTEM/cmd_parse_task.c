@@ -11,7 +11,9 @@ QueueHandle_t CMD_Parse_Queue;	//上位机命令获取消息队列句柄
 /*********************************************************************
  * 本地变量
  */
-
+#define TimeSyn 	1
+#define CtrlMesh 	2
+#define ReqMsg 		3
 /*********************************************************************
  * 本地函数
  */
@@ -30,17 +32,22 @@ void cmd_parse_task(void *pvParameters)
 		/*验证身份*/
 		(err==pdTRUE)&&(cmd[0]==0)&&(cmd[1]==1)&&(cmd[2]==2)&&(cmd[3]==3)&&(cmd[4]==4)&&(cmd[5]==5)&&(cmd[6]==6)&&(identity = 1);
 
+		u32 content = 0;
+		content = (cmd[8]<<24)+(cmd[9]<<16)+(cmd[10]<<8)+cmd[11];
 		if(identity){
-			if(cmd[7]=='T'){
-				u32 seccount = 0;
-				seccount = (cmd[8]<<24)+(cmd[9]<<16)+(cmd[10]<<8)+cmd[11];
-				xTaskNotify(RTCTask_Handler,seccount,eSetValueWithOverwrite);
-			}
-			if(cmd[0]=='C'){
-
-			}
-			if(cmd[0]=='R'){
-				
+			switch (cmd[7])
+			{
+				case TimeSyn:
+					xTaskNotify(RTCTask_Handler,content,eSetValueWithOverwrite);
+					break;
+				case CtrlMesh:
+					xTaskNotify(CMD_Cache_Task_Handler,content,eSetValueWithOverwrite);
+					break;
+				case ReqMsg:
+					//xTaskNotify(MSG_Get_Task_Handler,content,eSetValueWithOverwrite);
+					break;
+				default:
+					break;
 			}
 		}
   	}

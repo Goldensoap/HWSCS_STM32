@@ -87,7 +87,7 @@ void uart1_init(u32 bound)
 
 	USART_Init(USART1, &USART_InitStructure); 		//初始化串口1
 	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);	//开启串口接受中断
-	USART_ClearFlag(USART1,USART_FLAG_TC);			//清除串口1发送中断
+	USART_GetFlagStatus(USART1,USART_FLAG_TC);			//清除串口1发送中断
 	USART_Cmd(USART1, ENABLE);                   	//使能串口1 
 }
 
@@ -136,6 +136,6 @@ void uart2_init(u32 bound)
 
 	USART_Init(USART2, &USART_InitStructure); //初始化串口2
 	USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);//开启串口接受中断
-	USART_ClearFlag(USART2,USART_FLAG_TC);			//清除串口2发送中断
+	USART_GetFlagStatus(USART2,USART_FLAG_TC);			//清除串口2发送中断
 	USART_Cmd(USART2, ENABLE);                    //使能串口2
 }
