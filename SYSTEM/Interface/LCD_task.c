@@ -133,9 +133,10 @@ static u8 Is_Leap_Year(u16 year)
 static u8 Time_Get(u32 timecount)
 {
 	static u16 daycnt=0;
+	timecount += 8*3600;//UTC 北京时间修正8h 
 	u32 temp=0;
 	u16 temp1=0;
- 	temp=(timecount+8*3600)/86400;   //得到天数(秒钟数对应的)UTC 北京时间修正+8h 
+ 	temp=(timecount)/86400;   //得到天数(秒钟数对应的)
 	if(daycnt!=temp)//超过一天了
 	{	  
 		daycnt=temp;
