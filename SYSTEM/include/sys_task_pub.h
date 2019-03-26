@@ -92,19 +92,63 @@ extern void lcd_task(void *pvParameters);		//任务函数
 #define CMD_PARSE_LEN  	    30      //队列单元长度 30Byte，也是最大接收字节数
 extern QueueHandle_t CMD_Parse_Queue;	//上位机命令获取消息队列句柄
 
-#define TIME_STAMP_Q_NUM    1      // 时间邮箱，长度1
-#define TIME_STAMP_LEN      4      //u32 4字节长度
-extern QueueHandle_t Time_Stamp_Queue;
+#define CMD_UPLOAD_Q_NUM    5      //控制指令上传队列
+#define CMD_UPLOAD_LEN      3     //队列单元长度 3byte
+extern QueueHandle_t CMD_Upload_Queue;
+
+#define MSG_PARSE_Q_NUM     5      //mesh信息缓存队列
+#define MSG_PARSE_LEN       30     //队列单元长度 50byte
+extern QueueHandle_t Msg_Parse_Queue;
 
 #define MSG_UPLOAD_Q_NUM    5      //信息和ACK上传队列
 #define MSG_UPLOAD_LEN      30     //队列单元长度 50byte
 extern QueueHandle_t Msg_Upload_Queue;
 
-#define MSG_PARSE_Q_NUM     5      //信息和ACK上传队列
-#define MSG_PARSE_LEN       30     //队列单元长度 50byte
-extern QueueHandle_t Msg_Parse_Queue;
+#define TIME_STAMP_Q_NUM    1      // 时间邮箱，长度1
+#define TIME_STAMP_LEN      4      //u32 4字节长度
+extern QueueHandle_t Time_Stamp_Queue;
 
-#define CMD_UPLOAD_Q_NUM    5      //控制指令上传队列
-#define CMD_UPLOAD_LEN      3     //队列单元长度 3byte
-extern QueueHandle_t CMD_Upload_Queue;
+/*********************************************************************
+ * 结构体类型区
+ */
+typedef struct sensor_msg_from_mesh
+{
+
+    u16 address;
+    u8  room;
+    u8  sensorNum;
+    u8  sensorType;
+    u16  data;
+
+}sensor;
+
+typedef struct devive_status_from_mesh
+{
+    /* data */
+}device;
+
+typedef struct route_msg_from_mesh
+{
+    /* data */
+}route;
+
+typedef struct cmd_for_control_mesh
+{
+    /* data */
+}cmd;
+
+typedef struct sensor_data_stroe
+{
+    /* data */
+    u16 address;
+    u8  room;
+    u8  sensorNum;
+    u8  sensorType;
+    u16 data;
+    u32 timestamp;
+    
+}SensorStore;
+
+extern sensor SensorMsg;
+extern SensorStore sensor_store;
 #endif

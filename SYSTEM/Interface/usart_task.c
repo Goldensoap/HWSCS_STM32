@@ -94,31 +94,47 @@ void USART2_IRQHandler(void)
 {
 	u8 ReceiveByte;
 	BaseType_t xHigherPriorityTaskWoken;
-	
-	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET){  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
+	/*接收报文*/
+	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET){  //接收中断
 		ReceiveByte =USART_ReceiveData(USART2);	//读取接收到的数据
-		if((USART2_RX_STA&0x8000)==0){//接收未完成
-			if(USART2_RX_STA&0x4000){//接收到了0x0d
-				if(ReceiveByte!=0x0a)USART2_RX_STA=0;//接收错误,重新开始
-				else{
-					USART2_RX_STA|=0x8000;	//接收完成了
-				}
+		if(		(ReceiveByte == SOH) && (USART2_RX_STA & Set_ESC)==0)USART2_RX_STA |= Rev_SOH; //接收到帧头
+		else if((ReceiveByte == EOT) && (USART2_RX_STA & Set_ESC)==0)USART2_RX_STA |= Rev_EOT; //接收到帧尾
+		else if((ReceiveByte == ESC) && (USART2_RX_STA & Set_ESC)==0)USART2_RX_STA |= Set_ESC;//接收到转义字符
+		else if(USART2_RX_STA & Rev_SOH){ //接收报文
+			USART2_RX_BUF[USART2_RX_CONTER]=ReceiveByte;
+			USART2_RX_CONTER++;
+			if(USART2_RX_CONTER>(MSG_PARSE_LEN-1)){//接收字符超过上限
+				USART2_RX_STA=Init_STA; //清零状态
+				USART2_RX_CONTER=0;
+				for(int i=0; i<MSG_PARSE_LEN; i++)USART2_RX_BUF[i]=0;
 			}
-			else{ //还没收到0X0D
-				if(ReceiveByte==0x0d)USART2_RX_STA|=0x4000;
-				else{
-					USART2_RX_BUF[USART2_RX_STA&0X3FFF]=ReceiveByte ;
-					USART2_RX_STA++;
-					if(USART2_RX_STA>(CMD_PARSE_LEN-1))USART2_RX_STA=0;//接收数据错误,重新开始接收	  
-				}
-			}
+			USART2_RX_STA &= Clear_ESC;
 		}
-  	}
+ 	}
+	/*CRC校验匹配和消息发送*/
+	if((USART2_RX_STA& Rev_EOT)&&(CMD_Parse_Queue!=NULL)){ 
+		uint32_t temp = 0;
+		u8 count=0;
+		CRC_ResetDR(); //初始化CRC 余数
+		for(int i=(USART2_RX_CONTER-5);i>=0;i--){//输入报文内容计算
+			temp += (USART2_RX_BUF[i]<<(count*8));
+			if(count==3 || i==0){
+				CRC_CalcCRC(temp);
+				temp = 0;
+				count = 0;
+			}else count++;
+		}
+		for(int i=1;i<5;i++){
+			temp += (USART2_RX_BUF[USART2_RX_CONTER-i]<<(count*8));
+			count++;
+		}
+		CRC_CalcCRC(temp); //输入CRC余数
+		temp = CRC_GetCRC();//取得计算结果
 
-	if((USART2_RX_STA&0x8000)&&(Msg_Parse_Queue!=NULL)){
-		xQueueSendFromISR(Msg_Parse_Queue,USART2_RX_BUF,&xHigherPriorityTaskWoken);
-		USART2_RX_STA=0;
-		for(int i=0; i<MSG_PARSE_LEN; i++)USART2_RX_BUF[i]=0;
-		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+		if(temp == 0)xQueueSendFromISR(Msg_Parse_Queue,USART2_RX_BUF,&xHigherPriorityTaskWoken); //校验成功发送至队列
+		USART2_RX_STA=Init_STA; //清空标志
+		USART2_RX_CONTER=0;
+		for(int i=0; i<MSG_PARSE_LEN; i++)USART2_RX_BUF[i]=0;//清空队列
+		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);//进行上下文切换
 	}
 }

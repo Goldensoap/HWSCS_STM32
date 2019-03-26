@@ -44,7 +44,7 @@ void cmd_parse_task(void *pvParameters)
 					xTaskNotify(CMD_Cache_Task_Handler,content,eSetValueWithOverwrite);
 					break;
 				case ReqMsg:
-					//xTaskNotify(MSG_Get_Task_Handler,content,eSetValueWithOverwrite);
+					xTaskNotify(MSG_Get_Task_Handler,content,eSetValueWithOverwrite);
 					break;
 				default:
 					break;

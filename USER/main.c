@@ -82,6 +82,22 @@ void start_task(void *pvParameters)
             (UBaseType_t    )MSG_PARSE_TASK_PRIO,
             (TaskHandle_t*  )&Msg_Parse_Task_Handler);
 
+    /*创建信息调取任务*/
+    xTaskCreate((TaskFunction_t )MSG_Get_task,
+            (const char*    )"MSG_get_task",
+            (uint16_t       )MSG_GET_STK_SIZE,
+            (void*          )NULL,
+            (UBaseType_t    )MSG_GET_TASK_PRIO,
+            (TaskHandle_t*  )&MSG_Get_Task_Handler);
+
+    /*创建传感信息储存任务*/
+    xTaskCreate((TaskFunction_t )sensor_store_task,
+            (const char*    )"MSG_get_task",
+            (uint16_t       )SENSOR_STORE_STK_SIZE,
+            (void*          )NULL,
+            (UBaseType_t    )SENSOR_STORE_TASK_PRIO,
+            (TaskHandle_t*  )&Sensor_Store_Task_Handler);
+
     /*创建指令上传任务*/
     xTaskCreate((TaskFunction_t )cmd_upload_task,
             (const char*    )"cmd_upload_task",

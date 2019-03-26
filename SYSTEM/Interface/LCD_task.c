@@ -59,14 +59,23 @@ void lcd_task(void *pvParameters)
 	LCD_ShowString(30,50,200,16,16,"Environmental Perceptor"); //设备名
 	/*mesh 路由表+状态信息*/
 
-	/*时间模块UI框架*/
+	/*时间模块UI*/
 	POINT_COLOR = BLACK;
-	LCD_DrawRectangle(125,110,234,314); //画一个矩形	
+	LCD_DrawRectangle(125,110,234,210); //画一个矩形	
 	LCD_DrawLine(125,130,234,130);		//画线
 	POINT_COLOR = BLUE;
-	LCD_ShowString(126,111,110,16,16,"RTC TEST");	//框内填充字			 
+	LCD_ShowString(126,111,110,16,16,"Time");	//框内填充字
 	LCD_ShowString(126,131,200,16,16,"    -  -     ");	   //日期格式
 	LCD_ShowString(126,182,200,16,16,"  :  :  ");// 时间格式
+	/*mesh状态UI*/
+	POINT_COLOR = BLACK;
+	LCD_DrawRectangle(10,130,120,210); //画一个矩形
+	LCD_DrawLine(10,150,120,150);		//画线
+	POINT_COLOR = BLUE;
+	LCD_ShowString(11,131,110,16,16,"Mesh Net");	//框内填充字
+	LCD_ShowString(11,151,200,16,16,"SpaceNum:");//空间数量
+	LCD_ShowString(11,172,200,16,16,"deviceNum:");// 设备数量
+	
 	while(1){
 		/* 更新时间 */
 		xQueuePeek(Time_Stamp_Queue,&timestamp,SKIP);
@@ -74,9 +83,9 @@ void lcd_task(void *pvParameters)
 		if(t!=calendar.sec)
 		{
 			t=calendar.sec;
-			LCD_ShowNum(126,131,calendar.w_year,4,16);									  
-			LCD_ShowNum(166,131,calendar.w_month,2,16);									  
-			LCD_ShowNum(190,131,calendar.w_date,2,16);	 
+			LCD_ShowNum(126,131,calendar.w_year,4,16);
+			LCD_ShowNum(166,131,calendar.w_month,2,16);
+			LCD_ShowNum(190,131,calendar.w_date,2,16);
 			switch(calendar.week)
 			{
 				case 0:
@@ -105,6 +114,8 @@ void lcd_task(void *pvParameters)
 			LCD_ShowNum(150,182,calendar.min,2,16);									  
 			LCD_ShowNum(174,182,calendar.sec,2,16);
 		}
+		LCD_ShowNum(100,151,sensor_store.room,2,16);
+		LCD_ShowNum(100,171,sensor_store.sensorType,2,16);
 		/*更新路由表*/
 		delay_ms(10);
 	}
