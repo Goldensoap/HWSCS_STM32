@@ -75,7 +75,13 @@ void lcd_task(void *pvParameters)
 	LCD_ShowString(11,131,110,16,16,"Mesh Net");	//框内填充字
 	LCD_ShowString(11,151,200,16,16,"SpaceNum:");//空间数量
 	LCD_ShowString(11,172,200,16,16,"deviceNum:");// 设备数量
-	
+	/*系统状态*/
+	POINT_COLOR = BLACK;
+	LCD_DrawRectangle(10,220,220,300); //画一个矩形
+	LCD_DrawLine(10,240,220,240);	   //画线
+	POINT_COLOR = BLUE;
+	LCD_ShowString(11,221,110,16,16,"System State"); //框内填充字
+	LCD_ShowString(11,241,210,16,16,"Dyn Mem Rest:");//空间数量
 	while(1){
 		/* 更新时间 */
 		xQueuePeek(Time_Stamp_Queue,&timestamp,SKIP);
@@ -114,9 +120,11 @@ void lcd_task(void *pvParameters)
 			LCD_ShowNum(150,182,calendar.min,2,16);									  
 			LCD_ShowNum(174,182,calendar.sec,2,16);
 		}
+		/*更新mesh 状态*/
 		LCD_ShowNum(100,151,sensor_store.room,2,16);
 		LCD_ShowNum(100,171,sensor_store.sensorType,2,16);
-		/*更新路由表*/
+		/*更新系统状态*/
+		LCD_ShowNum(150,241,xPortGetFreeHeapSize(),6,16);
 		delay_ms(10);
 	}
 }
