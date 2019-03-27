@@ -9,6 +9,7 @@
  * 全局变量
  */
 TaskHandle_t LCDTask_Handler;     		//任务句柄
+device_t LCD_display; //显示用结构体
 /*********************************************************************
  * 本地变量
  */
@@ -73,9 +74,10 @@ void lcd_task(void *pvParameters)
 	LCD_DrawLine(10,150,120,150);		//画线
 	POINT_COLOR = BLUE;
 	LCD_ShowString(11,131,110,16,16,"Mesh Net");	//框内填充字
-	LCD_ShowString(11,151,200,16,16,"SpaceNum:");//空间数量
-	LCD_ShowString(11,172,200,16,16,"deviceNum:");// 设备数量
-	/*系统状态*/
+	LCD_ShowString(11,151,200,16,16,"RoomNum:");//空间数量
+	LCD_ShowString(11,171,200,16,16,"Sensor:");// 传感器数量
+	LCD_ShowString(11,191,200,16,16,"DataNum:");// 设备数量
+	/*系统状态UI*/
 	POINT_COLOR = BLACK;
 	LCD_DrawRectangle(10,220,220,300); //画一个矩形
 	LCD_DrawLine(10,240,220,240);	   //画线
@@ -121,8 +123,11 @@ void lcd_task(void *pvParameters)
 			LCD_ShowNum(174,182,calendar.sec,2,16);
 		}
 		/*更新mesh 状态*/
-		LCD_ShowNum(100,151,sensor_store.room,2,16);
-		LCD_ShowNum(100,171,sensor_store.sensorType,2,16);
+		uint32_t content = 0x00030000;
+		xTaskNotify(MSG_Get_Task_Handler,content,eSetValueWithoutOverwrite);
+		LCD_ShowNum(82,151,LCD_display.totalroom,2,16);
+//		LCD_ShowNum(100,171,LCD_display.totalsensor,2,16);
+		LCD_ShowNum(80,191,LCD_display.totaldata,4,16);
 		/*更新系统状态*/
 		LCD_ShowNum(150,241,xPortGetFreeHeapSize(),6,16);
 		delay_ms(10);

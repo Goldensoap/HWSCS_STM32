@@ -8,7 +8,7 @@
  */
 TaskHandle_t Msg_Parse_Task_Handler;     	//任务句柄
 QueueHandle_t Msg_Parse_Queue;	//mesh消息队列句柄
-sensor SensorMsg;
+sensor_t SensorMsg;
 /*********************************************************************
  * 本地变量
  */

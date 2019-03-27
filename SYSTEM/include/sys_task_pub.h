@@ -17,7 +17,10 @@
 /*********************************************************************
  * 公共变量
  */
-
+#define ROOM_MAX 255  // 房间数量上限，用于查询溢出
+#define TYPE_MAX 255  // 传感器类型数量上限，用于查询溢出
+#define SENSOR_MAX 65535 //传感器数量上限
+#define DATA_MAX 10 //单设备存储数据条目上限
 /*********************************************************************
  * 任务定义区
  * 任务优先级 0-32
@@ -120,35 +123,66 @@ typedef struct sensor_msg_from_mesh
     u8  sensorType;
     u16  data;
 
-}sensor;
+}sensor_t;
 
 typedef struct devive_status_from_mesh
 {
-    /* data */
-}device;
+    u8 totalroom;
+    u8  totalsensor;
+    u16 totaldata;
+}device_t;
 
 typedef struct route_msg_from_mesh
 {
-    /* data */
-}route;
+    
+}route_t;
 
 typedef struct cmd_for_control_mesh
 {
-    /* data */
-}cmd;
+    
+}cmd_t;
 
-typedef struct sensor_data_stroe
+/* 下面四个是嵌套链表结构体*/
+typedef struct SensorData
 {
-    /* data */
-    u16 address;
+    u8  count;
     u8  room;
-    u8  sensorNum;
     u8  sensorType;
+    u32 sensorLabel;
     u16 data;
     u32 timestamp;
-    
-}SensorStore;
+    struct SensorData *next;
 
-extern sensor SensorMsg;
-extern SensorStore sensor_store;
+}SensorData_t;
+
+typedef struct SensorLabel
+{
+    
+    u32 sensorLabel;
+    struct SensorData *sensorData;
+    struct SensorLabel *next;
+
+}SensorLabel_t;
+
+typedef struct SensorType
+{
+    
+    u8 sensorType;
+    struct SensorLabel *sensorLable;
+    struct SensorType *next;
+    
+}SensorType_t;
+
+typedef struct SpaceNum
+{
+   
+    u8 space_num;
+    struct SensorType *sensorType;
+    struct SpaceNum *next;
+
+}SpaceNum_t;
+
+extern sensor_t SensorMsg;
+extern SpaceNum_t *DataSheet;
+extern device_t LCD_display;
 #endif
