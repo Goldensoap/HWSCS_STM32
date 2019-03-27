@@ -101,36 +101,27 @@ void sensor_store_task(void *pvParameters)
                         /*头插法插入数据*/
                         u32 timestamp;
                         xQueuePeek( Time_Stamp_Queue,&timestamp,SKIP );
-                        if( labelp->sensorData == NULL ){
+                        if( labelp->sensorData == NULL ){  //头数据初始化
                             labelp->sensorData = (SensorData_t *)pvPortMalloc( sizeof(SensorData_t) );
                             labelp->sensorData->count = 1;
                             labelp->sensorData->data = SensorMsg.data;
                             labelp->sensorData->next = NULL;
-                            labelp->sensorData->room = SensorMsg.room;
-                            labelp->sensorData->sensorLabel = label;
-                            labelp->sensorData->sensorType = SensorMsg.sensorType;
                             labelp->sensorData->timestamp = timestamp;
-                        }else if( labelp->sensorData->count < DATA_MAX ){
+                        }else if( labelp->sensorData->count < DATA_MAX ){ //头插法插入新数据
                             SensorData_t *data = (SensorData_t *)pvPortMalloc( sizeof(SensorData_t) );
                             data->next = labelp->sensorData;
                             data->count = (labelp->sensorData->count) + 1; //条目计数+1
                             labelp->sensorData = data;
 
                             data->data = SensorMsg.data;
-                            data->room = SensorMsg.room;
-                            data->sensorLabel = label;
-                            data->sensorType = SensorMsg.sensorType;
                             data->timestamp = timestamp;
-                        }else{
+                        }else{  //更新头数据，并删除多余尾数据
                             SensorData_t *data = (SensorData_t *)pvPortMalloc( sizeof(SensorData_t) );
                             data->next = labelp->sensorData;
                             data->count = labelp->sensorData->count;
                             labelp->sensorData = data;
 
                             data->data = SensorMsg.data;
-                            data->room = SensorMsg.room;
-                            data->sensorLabel = label;
-                            data->sensorType = SensorMsg.sensorType;
                             data->timestamp = timestamp;
 
                             SensorData_t *end = NULL; // 删除尾节点

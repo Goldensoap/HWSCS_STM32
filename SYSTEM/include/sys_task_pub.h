@@ -146,9 +146,6 @@ typedef struct cmd_for_control_mesh
 typedef struct SensorData
 {
     u8  count;
-    u8  room;
-    u8  sensorType;
-    u32 sensorLabel;
     u16 data;
     u32 timestamp;
     struct SensorData *next;

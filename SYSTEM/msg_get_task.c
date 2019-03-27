@@ -56,17 +56,15 @@ void MSG_Get_task(void *pvParameters)
                             SensorData_t *data = NULL;
                             while(device != NULL){ //输出类型下所有设备的最新数据
                                 data = device->sensorData;
-                                Msg[0]=data->sensorType;    // 传感类型
-                                Msg[1]=data->data>>8;       // 传感数据 高位
-                                Msg[2]=data->data&0x00FF;   // 传感数据 低位
-                                Msg[3]=data->room;          // 传感器房间号
-                                Msg[4]=(data->sensorLabel&0x00ff0000)>>16;  //传感器编号 大端
-                                Msg[5]=(data->sensorLabel&0x0000ff00)>>8;   //传感器编号
-                                Msg[6]=data->sensorLabel&0x000000ff;        //传感器编号
-                                Msg[7]=data->timestamp>>24;                 //时间戳，大端
-                                Msg[8]=(data->timestamp&0x00ff0000)>>16;    //时间戳
-                                Msg[9]=(data->timestamp&0x0000ff00)>>8;     //时间戳
-                                Msg[10]=data->timestamp&0x000000ff;         //时间戳
+                                Msg[0]=( data->data )>>8;       // 传感数据 高位
+                                Msg[1]=( data->data )&0x00FF;   // 传感数据 低位
+                                Msg[2]=( (device->sensorLabel)&0x00ff0000 )>>16;  //传感器编号
+                                Msg[3]=( (device->sensorLabel)&0x0000ff00 )>>8;   //内网地址 高位
+                                Msg[4]=( device->sensorLabel )&0x000000ff;        //内网地址 低位
+                                Msg[5]=( data->timestamp )>>24;                 //时间戳，大端
+                                Msg[6]=( (data->timestamp)&0x00ff0000 )>>16;    //时间戳
+                                Msg[7]=( (data->timestamp)&0x0000ff00 )>>8;     //时间戳
+                                Msg[8]=( data->timestamp )&0x000000ff;         //时间戳
                                 err = xQueueSend(Msg_Upload_Queue,Msg,100); //发送至信息上传队列
                                 device = device->next;
                             }
@@ -78,7 +76,7 @@ void MSG_Get_task(void *pvParameters)
                             break;
                         }else type_p = type_p->next; //下一类型节点
                     }
-                    if(err == pdPASS)for(int i =0;i<11;i++)Msg[i]=0;
+                    if(err == pdPASS)for(int i =0;i<9;i++)Msg[i]=0;
                     break;
 				}
                 case ROUTE:
