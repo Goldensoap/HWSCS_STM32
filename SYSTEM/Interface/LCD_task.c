@@ -36,7 +36,6 @@ static int lcd_discolor[14]={	WHITE, BLACK, BLUE,  BRED,
 						GREEN, CYAN,  YELLOW,BROWN, 			
 						BRRED, GRAY };
 
-#define SKIP	0  //队列获取跳过阻塞
 /*********************************************************************
  * 函数声明
  */
