@@ -14,6 +14,7 @@ sensor_t SensorMsg;
  */
 #define SENSORDATA  1
 #define ROUTEDATA   2
+#define ACK         3
 /*********************************************************************
  * 本地函数
  */
@@ -40,6 +41,16 @@ void msg_parse_task(void *pvParameters)
                     break;
                 case ROUTEDATA:
                     break;
+                case ACK:
+				{
+                    uint32_t label;
+                    err=pdFAIL;
+                    label = msg[1];
+                    while(err==pdFAIL){
+                        err=xTaskNotify(CMD_Upload_Task_Handler,label,eSetValueWithoutOverwrite);
+                    }
+                    break;
+				}
                 default:
                     break;
             }

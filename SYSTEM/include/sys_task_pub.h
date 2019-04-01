@@ -97,15 +97,15 @@ extern void lcd_task(void *pvParameters);		//任务函数
 extern QueueHandle_t CMD_Parse_Queue;	//上位机命令获取消息队列句柄
 
 #define CMD_UPLOAD_Q_NUM    5      //控制指令上传队列
-#define CMD_UPLOAD_LEN      3     //队列单元长度 3byte
+#define CMD_UPLOAD_LEN      4     //队列单元长度 4byte
 extern QueueHandle_t CMD_Upload_Queue;
 
 #define MSG_PARSE_Q_NUM     5      //mesh信息缓存队列
-#define MSG_PARSE_LEN       30     //队列单元长度 50byte
+#define MSG_PARSE_LEN       30     //队列单元长度 30byte
 extern QueueHandle_t Msg_Parse_Queue;
 
 #define MSG_UPLOAD_Q_NUM    5      //信息和ACK上传队列
-#define MSG_UPLOAD_LEN      30     //队列单元长度 50byte
+#define MSG_UPLOAD_LEN      30     //队列单元长度 30byte
 extern QueueHandle_t Msg_Upload_Queue;
 
 #define TIME_STAMP_Q_NUM    1      // 时间邮箱，长度1
