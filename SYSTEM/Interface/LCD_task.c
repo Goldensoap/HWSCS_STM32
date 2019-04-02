@@ -124,8 +124,8 @@ void lcd_task(void *pvParameters)
 		/*更新mesh 状态*/
 		uint32_t content = 0x00030000;
 		xTaskNotify(MSG_Get_Task_Handler,content,eSetValueWithoutOverwrite);
-		LCD_ShowNum(82,151,LCD_display.totalroom,2,16);
-//		LCD_ShowNum(100,171,LCD_display.totalsensor,2,16);
+		LCD_ShowNum(80,151,LCD_display.totalroom,4,16);
+		LCD_ShowNum(80,171,LCD_display.totalsensor,4,16);
 		LCD_ShowNum(80,191,LCD_display.totaldata,4,16);
 		/*更新系统状态*/
 		LCD_ShowNum(150,241,xPortGetFreeHeapSize(),6,16);

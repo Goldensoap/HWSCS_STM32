@@ -85,6 +85,7 @@ void MSG_Get_task(void *pvParameters)
                 {
                     uint16_t data_count=0;
                     uint8_t room_count=0;
+                    uint8_t sensor_count=0;
                     SpaceNum_t *room = DataSheet;
                     SensorType_t *type = NULL;
                     SensorLabel_t *device = NULL;
@@ -97,6 +98,7 @@ void MSG_Get_task(void *pvParameters)
                             while(device != NULL){
                                 data = device->sensorData;
                                 data_count += data->count;
+                                sensor_count ++;
                                 device = device->next;
                             }
                             type = type->next;
@@ -105,6 +107,7 @@ void MSG_Get_task(void *pvParameters)
                     }
                     LCD_display.totalroom = room_count;
                     LCD_display.totaldata = data_count;
+                    LCD_display.totalsensor = sensor_count;
 					break;
                 }
                 default:

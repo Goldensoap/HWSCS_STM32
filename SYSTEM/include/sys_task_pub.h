@@ -143,7 +143,7 @@ typedef struct cmd_for_control_mesh
     
 }cmd_t;
 
-/* 下面四个是嵌套链表结构体*/
+/* 下面四个是树状表结构体*/
 typedef struct SensorData
 {
     u8  count;

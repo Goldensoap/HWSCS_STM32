@@ -62,7 +62,7 @@ void cmd_cache_task(void *pvParameters)
                 err = xQueueSend(CMD_Upload_Queue,cmd,0); //发送至指令上传队列
                 xQueuePeek(Time_Stamp_Queue,&TimeStamp,SKIP);
                 for( int i=0; i<5; i++ ){ //命令缓存，未做溢出异常处理
-                    if( (cmd_cache[i].cmd = NotifyValue) || (cmd_cache[i].timestamp == 0) ){
+                    if( (cmd_cache[i].cmd == NotifyValue) || (cmd_cache[i].timestamp == 0) ){
                         cmd_cache[i].cmd = NotifyValue;
                         cmd_cache[i].timestamp = TimeStamp;
                         break;

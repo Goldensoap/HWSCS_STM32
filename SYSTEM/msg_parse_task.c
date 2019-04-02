@@ -47,7 +47,7 @@ void msg_parse_task(void *pvParameters)
                     err=pdFAIL;
                     label = msg[1];
                     while(err==pdFAIL){
-                        err=xTaskNotify(CMD_Upload_Task_Handler,label,eSetValueWithoutOverwrite);
+                        err=xTaskNotify(CMD_Cache_Task_Handler,label,eSetValueWithoutOverwrite);
                     }
                     break;
 				}
