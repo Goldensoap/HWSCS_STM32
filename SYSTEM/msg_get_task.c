@@ -56,15 +56,15 @@ void MSG_Get_task(void *pvParameters)
                             SensorData_t *data = NULL;
                             while(device != NULL){ //输出类型下所有设备的最新数据
                                 data = device->sensorData;
-                                Msg[0]=( data->data )>>8;       // 传感数据 高位
-                                Msg[1]=( data->data )&0x00FF;   // 传感数据 低位
-                                Msg[2]=( (device->sensorLabel)&0x00ff0000 )>>16;  //传感器编号
-                                Msg[3]=( (device->sensorLabel)&0x0000ff00 )>>8;   //内网地址 高位
-                                Msg[4]=( device->sensorLabel )&0x000000ff;        //内网地址 低位
-                                Msg[5]=( data->timestamp )>>24;                 //时间戳，大端
-                                Msg[6]=( (data->timestamp)&0x00ff0000 )>>16;    //时间戳
-                                Msg[7]=( (data->timestamp)&0x0000ff00 )>>8;     //时间戳
-                                Msg[8]=( data->timestamp )&0x000000ff;         //时间戳
+                                Msg[0]=( (device->sensorLabel)&0x00ff0000 )>>16;  //传感器编号
+                                Msg[1]=( (device->sensorLabel)&0x0000ff00 )>>8;   //内网地址 高位
+                                Msg[2]=( device->sensorLabel )&0x000000ff;        //内网地址 低位
+                                Msg[3]=( data->timestamp )>>24;                 //时间戳，大端
+                                Msg[4]=( (data->timestamp)&0x00ff0000 )>>16;    //时间戳
+                                Msg[5]=( (data->timestamp)&0x0000ff00 )>>8;     //时间戳
+                                Msg[6]=( data->timestamp )&0x000000ff;         //时间戳
+                                Msg[7]=( data->data )>>8;       // 传感数据 高位
+                                Msg[8]=( data->data )&0x00FF;   // 传感数据 低位
                                 err = xQueueSend(Msg_Upload_Queue,Msg,100); //发送至信息上传队列
                                 device = device->next;
                             }

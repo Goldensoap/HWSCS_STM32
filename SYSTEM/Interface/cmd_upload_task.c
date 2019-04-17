@@ -26,12 +26,10 @@ void cmd_upload_task(void *pvParameters)
         }
         err=xQueueReceive(CMD_Upload_Queue,UPLOAD_BUF,portMAX_DELAY);
         if(err==pdTRUE){
-#if _DEBUG
             for(int i=0;i<CMD_UPLOAD_LEN;i++){
                 USART_SendData(USART2,UPLOAD_BUF[i]);
                 while(USART_GetFlagStatus(USART2,USART_FLAG_TC)==RESET);
             }
-#endif
         }
     }
 }
