@@ -63,8 +63,12 @@ void MSG_Get_task(void *pvParameters)
                                 Msg[4]=( (data->timestamp)&0x00ff0000 )>>16;    //时间戳
                                 Msg[5]=( (data->timestamp)&0x0000ff00 )>>8;     //时间戳
                                 Msg[6]=( data->timestamp )&0x000000ff;         //时间戳
-                                Msg[7]=( data->data )>>8;       // 传感数据 高位
-                                Msg[8]=( data->data )&0x00FF;   // 传感数据 低位
+                                if ( (data->data)>255 ){
+                                    Msg[7]=( data->data )>>8;       // 传感数据 高位
+                                    Msg[8]=( data->data )&0x00FF;   // 传感数据 低位
+                                }else{
+                                    Msg[7]=(unsigned char)data->data;
+                                }
                                 err = xQueueSend(Msg_Upload_Queue,Msg,100); //发送至信息上传队列
                                 device = device->next;
                             }
