@@ -37,19 +37,19 @@ void rtc_task(void *pvParameters)
 			if(NotifyValue==RTC_Get()){ //对比RTC时间戳
 
 				#if _DEBUG
-			    printf("{\"DEBUG\":\"TimeStamp same....\"}\r\n");
+			    printf("{\"Type\":\"DEBUG\",\"Content\":\"TimeStamp same....\"}\r\n");
 				#endif
 
 			}else{ 				//若值不同则进行同步
 				RTC_Set_Timestamp(NotifyValue);
 
 				#if _DEBUG
-			    printf("{\"DEBUG\":\"TimeStamp syn success....\"}\r\n");
+			    printf("{\"Type\":\"DEBUG\",\"Content\":\"TimeStamp syn success....\"}\r\n");
 				#endif
 
 			}
 
-			sprintf(ack,"{\"RTC\":%u}\r\n",NotifyValue);
+			sprintf(ack,"{\"Type\":\"RTC\",\"Content\":%u}\r\n",NotifyValue);
 			xQueueSend(Msg_Upload_Queue,ack,100);
 
 			NotifyValue=0;
