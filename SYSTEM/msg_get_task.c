@@ -74,7 +74,7 @@ static void Send_Whole_Table( void )
             while(device != NULL){
                 data = device->sensorData;
 
-                sprintf(Msg,"{\"Type\":\"SENSOR\",\"Content\":{\"Space\":%u,\"Device\":\"%x\",\"Sensor\":%u,\"Type\":%u,\"Data\":%u,\"Time\":%u}}\r\n",\
+                sprintf(Msg,"{\"SENSOR\":{\"Space\":%u,\"Device\":\"%x\",\"Sensor\":%u,\"Type\":%u,\"Data\":%u,\"Time\":%u}}\r\n",\
                     room->space_num,\
                     (u16)((device->sensorLabel)&0x0000ffff),\
                     (u8)(((device->sensorLabel)&0x00ff0000)>>16),\
@@ -107,7 +107,7 @@ static void Send_Spec_Room_And_Type( u8 roomNum, u8 typeNum )
         }else if(room_p->next == NULL){ //房间未找到
 
             #if _DEBUG
-            printf("{\"Type\":\"DEBUG\",\"Content\":\"room not found\"}\r\n");
+            printf("{\"DEBUG\":\"room not found\"}\r\n");
             #endif
 
             break;
@@ -121,7 +121,7 @@ static void Send_Spec_Room_And_Type( u8 roomNum, u8 typeNum )
             while(device != NULL){ //输出类型下所有设备的最新数据
                 data = device->sensorData;
 
-                sprintf(Msg,"{\"Type\":\"SENSOR\",\"Content\":{\"Space\":%u,\"Device\":\"%x\",\"Sensor\":%u,\"Type\":%u,\"Data\":%u,\"Time\":%u}}\r\n",\
+                sprintf(Msg,"{\"SENSOR\":{\"Space\":%u,\"Device\":\"%x\",\"Sensor\":%u,\"Type\":%u,\"Data\":%u,\"Time\":%u}}\r\n",\
                     roomNum,\
                     (u16)((device->sensorLabel)&0x0000ffff),\
                     (u8)(((device->sensorLabel)&0x00ff0000)>>16),\
@@ -136,7 +136,7 @@ static void Send_Spec_Room_And_Type( u8 roomNum, u8 typeNum )
         }else if( type_p->next == NULL ){ //类型未找到
 
             #if _DEBUG
-            printf("{\"Type\":\"DEBUG\",\"Content\":\"type not found\"}\r\n");
+            printf("{\"DEBUG\":\"type not found\"}\r\n");
             #endif
 
             break;
