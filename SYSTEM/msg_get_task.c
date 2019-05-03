@@ -61,17 +61,44 @@ void MSG_Get_task(void *pvParameters)
 
 static void Send_Whole_Table( void )
 {
-    // BaseType_t err;
-    // SpaceNum_t *room_p = DataSheet;
-    // char Msg[MSG_UPLOAD_LEN];
-    // for(int i =0;i<MSG_UPLOAD_LEN;i++)Msg[i]=0;
+    BaseType_t err;
+    char Msg[MSG_UPLOAD_LEN];
+    SpaceNum_t *room = DataSheet;
+    SensorType_t *type = NULL;
+    SensorLabel_t *device = NULL;
+    SensorData_t *data = NULL;
+    while(room != NULL){
+        type = room->sensorType;
+        while(type != NULL){
+            device = type->sensorLable;
+            while(device != NULL){
+                data = device->sensorData;
+
+                sprintf(Msg,"{\"SENSOR\":{\"Space\":%u,\"Device\":\"%x\",\"Sensor\":%u,\"Type\":%u,\"Data\":%u,\"Time\":%u}}\r\n",\
+                    room->space_num,\
+                    (u16)((device->sensorLabel)&0x0000ffff),\
+                    (u8)(((device->sensorLabel)&0x00ff0000)>>16),\
+                    type->sensorType,\
+                    (u16)(data->data),\
+                    (u32)(data->timestamp));
+
+                err = xQueueSend(Msg_Upload_Queue,Msg,100); //发送至信息上传队列
+                if(err != pdPASS){
+                    
+                };
+
+                device = device->next;
+            }
+            type = type->next;
+        }
+        room = room->next;
+    }
 }
 
 static void Send_Spec_Room_And_Type( u8 roomNum, u8 typeNum )
 {
 	BaseType_t err;
     char Msg[MSG_UPLOAD_LEN];
-    for(int i =0;i<MSG_UPLOAD_LEN;i++)Msg[i]=0;
 
     SpaceNum_t *room_p = DataSheet;
     for( int i=0; i < ROOM_MAX; i++){
@@ -93,15 +120,7 @@ static void Send_Spec_Room_And_Type( u8 roomNum, u8 typeNum )
             SensorData_t *data = NULL;
             while(device != NULL){ //输出类型下所有设备的最新数据
                 data = device->sensorData;
-                /*
-                  * 
-                  * 设备内网地址
-                  * 传感器编号
-                  * 传感类型
-                  * 数据内容
-                  * 时间戳
-                  * 
-                */
+
                 sprintf(Msg,"{\"SENSOR\":{\"Space\":%u,\"Device\":\"%x\",\"Sensor\":%u,\"Type\":%u,\"Data\":%u,\"Time\":%u}}\r\n",\
                     roomNum,\
                     (u16)((device->sensorLabel)&0x0000ffff),\
@@ -109,6 +128,7 @@ static void Send_Spec_Room_And_Type( u8 roomNum, u8 typeNum )
                     typeNum,\
                     (u16)(data->data),\
                     (u32)(data->timestamp));
+
                 err = xQueueSend(Msg_Upload_Queue,Msg,100); //发送至信息上传队列
                 device = device->next;
             }
@@ -122,7 +142,10 @@ static void Send_Spec_Room_And_Type( u8 roomNum, u8 typeNum )
             break;
         }else type_p = type_p->next; //下一类型节点
     }
-    if(err == pdPASS)for(int i =0;i<9;i++)Msg[i]=0;
+
+    if(err != pdPASS){
+
+    };
 }
 
 static void LCD_Update( void )
