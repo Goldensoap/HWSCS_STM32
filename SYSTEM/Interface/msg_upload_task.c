@@ -25,7 +25,7 @@ void msg_upload_task(void *pvParameters)
         err=xQueueReceive(Msg_Upload_Queue,UPLOAD_BUF,portMAX_DELAY);
         if(err==pdTRUE){
 
-            printf("%s\r\n",UPLOAD_BUF);
+            printf("%s",UPLOAD_BUF);
 
         }
     }

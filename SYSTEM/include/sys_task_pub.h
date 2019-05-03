@@ -105,7 +105,7 @@ extern QueueHandle_t CMD_Upload_Queue;
 extern QueueHandle_t Msg_Parse_Queue;
 
 #define MSG_UPLOAD_Q_NUM    5      //信息和ACK上传队列
-#define MSG_UPLOAD_LEN      30     //队列单元长度 30byte
+#define MSG_UPLOAD_LEN      100     //队列单元长度 30byte
 extern QueueHandle_t Msg_Upload_Queue;
 
 #define TIME_STAMP_Q_NUM    1      // 时间邮箱，长度1
