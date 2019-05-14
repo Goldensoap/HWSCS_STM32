@@ -7,7 +7,6 @@
  * 全局变量
  */
 TaskHandle_t Msg_Upload_Task_Handler;     	//任务句柄
-QueueHandle_t Msg_Upload_Queue;             //信息上传队列句柄
 /*********************************************************************
  * 本地变量
  */
@@ -18,14 +17,13 @@ static u8 UPLOAD_BUF[MSG_UPLOAD_LEN];
 
 void msg_upload_task(void *pvParameters)
 {
-    Msg_Upload_Queue=xQueueCreate(MSG_UPLOAD_Q_NUM,MSG_UPLOAD_LEN);
-    BaseType_t err;
+    BaseType_t result;
     while(1){
         for(int i=0;i<MSG_UPLOAD_LEN;i++)UPLOAD_BUF[i]=0;
-        err=xQueueReceive(Msg_Upload_Queue,UPLOAD_BUF,portMAX_DELAY);
-        if(err==pdTRUE){
+        result=Receive_From_Queue( UPLOAD_BUF );
+        if(result==pdTRUE){
 
-            printf("%s",UPLOAD_BUF);
+            Upload_To_Host( UPLOAD_BUF );
 
         }
     }

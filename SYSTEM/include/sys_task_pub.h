@@ -5,7 +5,8 @@
  * 编译选项
  */
 #define _DEBUG	1//debug 条件编译 1开启debug，0关闭
-
+#define BASE_OS FreeRTOS
+#define BASE_DEVICE STM32
 /*********************************************************************
  * 公用头文件
  */
@@ -22,6 +23,19 @@
 #define TYPE_MAX 255  // 传感器类型数量上限，用于查询溢出
 #define SENSOR_MAX 65535 //传感器数量上限
 #define DATA_MAX 10 //单设备存储数据条目上限
+#if (BASE_OS != FreeRTOS)
+    typedef long BaseType_t;
+    #define pdFALSE			( ( BaseType_t ) 0 )
+    #define pdTRUE			( ( BaseType_t ) 1 )
+#endif
+/*********************************************************************
+ * 系统API
+ */
+#if (BASE_OS == FreeRTOS && BASE_DEVICE == STM32)
+#define Msg_Upload_To_Host( Msg ) xQueueSend( Msg_Upload_Queue, (Msg), 100 )
+#define Receive_From_Queue( Upload_Buffer ) xQueueReceive( Msg_Upload_Queue,(Upload_Buffer),portMAX_DELAY )
+#define Upload_To_Host( Upload_Buffer ) printf("%s",( Upload_Buffer ))
+#endif
 /*********************************************************************
  * 任务定义区
  * 任务优先级 0-32

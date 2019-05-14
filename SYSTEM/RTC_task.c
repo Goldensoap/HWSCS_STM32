@@ -7,7 +7,7 @@
  * 全局变量
  */
 TaskHandle_t RTCTask_Handler;     		//任务句柄
-QueueHandle_t Time_Stamp_Queue;			//队列句柄
+
 /*********************************************************************
  * 本地变量
  */
@@ -26,7 +26,6 @@ void rtc_task(void *pvParameters)
 	char ack[MSG_UPLOAD_LEN];
 	for(int i=0;i<MSG_UPLOAD_LEN;i++)ack[i]=0;
 
-	Time_Stamp_Queue=xQueueCreate(TIME_STAMP_Q_NUM,TIME_STAMP_LEN); //创建时间邮箱
 	while(1)
 	{
 		err=xTaskNotifyWait((uint32_t	)U32_MAX,

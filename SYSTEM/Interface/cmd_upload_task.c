@@ -7,7 +7,6 @@
  * 全局变量
  */
 TaskHandle_t CMD_Upload_Task_Handler;     	//任务句柄
-QueueHandle_t CMD_Upload_Queue;             //信息上传队列句柄
 /*********************************************************************
  * 本地变量
  */
@@ -18,7 +17,6 @@ static u8 UPLOAD_BUF[CMD_UPLOAD_LEN];
 
 void cmd_upload_task(void *pvParameters)
 {
-    CMD_Upload_Queue=xQueueCreate(CMD_UPLOAD_Q_NUM,CMD_UPLOAD_LEN);
     BaseType_t err;
     while(1){
         for(int i=0;i<CMD_UPLOAD_LEN;i++){

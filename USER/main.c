@@ -11,6 +11,12 @@
  * 全局变量
  */
 TaskHandle_t StartTask_Handler;
+
+QueueHandle_t Msg_Upload_Queue;         //信息上传队列句柄
+QueueHandle_t Msg_Parse_Queue;	        //mesh消息队列句柄
+QueueHandle_t Time_Stamp_Queue;			//队列句柄
+QueueHandle_t CMD_Parse_Queue;	        //上位机命令获取消息队列句柄
+QueueHandle_t CMD_Upload_Queue;         //信息上传队列句柄
 /*********************************************************************
  * 本地变量
  */
@@ -41,6 +47,12 @@ int main(void)
 void start_task(void *pvParameters)
 {
     taskENTER_CRITICAL();           //进入临界区
+
+    Msg_Upload_Queue=xQueueCreate(MSG_UPLOAD_Q_NUM,MSG_UPLOAD_LEN); //创建信息上传队列
+    Time_Stamp_Queue=xQueueCreate(TIME_STAMP_Q_NUM,TIME_STAMP_LEN); //创建时间邮箱
+    Msg_Parse_Queue=xQueueCreate(MSG_PARSE_Q_NUM,MSG_PARSE_LEN);    //创建传感网络信息接收队列
+    CMD_Parse_Queue=xQueueCreate(CMD_PARSE_Q_NUM,CMD_PARSE_LEN);    //创建上位机命令接收队列
+    CMD_Upload_Queue=xQueueCreate(CMD_UPLOAD_Q_NUM,CMD_UPLOAD_LEN); //创建上位机命令上传队列
 
     /*创建上位机指令解析任务*/
     xTaskCreate((TaskFunction_t )cmd_parse_task,
