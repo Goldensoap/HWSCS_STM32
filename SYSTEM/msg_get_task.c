@@ -82,7 +82,7 @@ static void Send_Whole_Table( void )
                     (u16)(data->data),\
                     (u32)(data->timestamp));
 
-                err = xQueueSend(Msg_Upload_Queue,Msg,100); //发送至信息上传队列
+                err = Msg_Upload_To_Host( Msg ); //发送至信息上传队列
                 if(err != pdPASS){
                     
                 };
@@ -129,7 +129,7 @@ static void Send_Spec_Room_And_Type( u8 roomNum, u8 typeNum )
                     (u16)(data->data),\
                     (u32)(data->timestamp));
 
-                err = xQueueSend(Msg_Upload_Queue,Msg,100); //发送至信息上传队列
+                err = Msg_Upload_To_Host( Msg ); //发送至信息上传队列
                 device = device->next;
             }
             break;
